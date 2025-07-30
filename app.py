@@ -1,9 +1,8 @@
-
 from flask import Flask, request, jsonify
-import pymysql
+import mysql.connector
 import os
 
-SSL_CERT_PATH = os.path.abspath("azure-ca.pem")  # must resolve at runtime
+SSL_CERT_PATH = os.path.abspath("azure-ca.pem")  # Make sure this cert is present
 
 app = Flask(__name__)
 
@@ -12,7 +11,8 @@ DB_CONFIG = {
     "user": os.getenv("DB_USER", ""),
     "password": os.getenv("DB_PASSWORD", ""),
     "database": os.getenv("DB_NAME", ""),
-    "ssl": {"ca": SSL_CERT_PATH}
+    "ssl_ca": SSL_CERT_PATH,  # Enable SSL
+    "ssl_verify_cert": True
 }
 
 @app.route("/debug-cert")
@@ -32,11 +32,13 @@ def run_sql():
         return jsonify({"error": "Only SELECT queries allowed"}), 400
 
     try:
-        conn = pymysql.connect(**DB_CONFIG)
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-            columns = [desc[0] for desc in cursor.description]
-            rows = cursor.fetchall()
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute(query)
+        columns = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
         return jsonify({"result": [dict(zip(columns, row)) for row in rows]})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
