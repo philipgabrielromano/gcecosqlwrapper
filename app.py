@@ -10,8 +10,11 @@ DB_CONFIG = {
     "user": os.getenv("DB_USER", ""),
     "password": os.getenv("DB_PASSWORD", ""),
     "database": os.getenv("DB_NAME", ""),
-    "ssl": {"ssl_disabled": True}
+    "ssl": {
+        "ca": os.path.join(os.path.dirname(__file__), "azure-ca.pem")
+    }
 }
+
 
 @app.route("/")
 def home():
