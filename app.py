@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify
 import pymysql
 import os
 
+SSL_CERT_PATH = os.path.abspath("azure-ca.pem")  # must resolve at runtime
+
 app = Flask(__name__)
 
 DB_CONFIG = {
@@ -10,11 +12,8 @@ DB_CONFIG = {
     "user": os.getenv("DB_USER", ""),
     "password": os.getenv("DB_PASSWORD", ""),
     "database": os.getenv("DB_NAME", ""),
-    "ssl": {
-        "ca": os.path.abspath("azure-ca.pem")
-    }
+    "ssl": {"ca": SSL_CERT_PATH}
 }
-
 
 @app.route("/")
 def home():
