@@ -11,7 +11,7 @@ DB_CONFIG = {
     "password": os.getenv("DB_PASSWORD", ""),
     "database": os.getenv("DB_NAME", ""),
     "ssl": {
-        "ca": os.path.join(os.path.dirname(__file__), "azure-ca.pem")
+        "ca": os.path.abspath("azure-ca.pem")
     }
 }
 
