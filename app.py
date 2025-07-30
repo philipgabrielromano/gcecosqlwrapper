@@ -15,6 +15,10 @@ DB_CONFIG = {
     "ssl": {"ca": SSL_CERT_PATH}
 }
 
+@app.route("/debug-cert")
+def debug_cert():
+    return "Exists!" if os.path.exists(SSL_CERT_PATH) else "Not found", 200
+
 @app.route("/")
 def home():
     return "MySQL passthrough API is running"
